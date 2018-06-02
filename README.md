@@ -36,15 +36,15 @@ I've tried to keep all the parameters controlled by variables at the start of th
 
 ### what it's doing
 1. Scan `/data/` folder for all available `.csv` files.
-* Load them individually and also create a massive amalgamated set from all of them.
-* Wipe the `/output/` folder.
-* Starting with a fresh clean RNN model, train that `n_overall_passes` times on the whole set.
-* Each iteration, generate `output_size` rows of sample output at a range of temperatures in `n_temp_increments` increments, going higher the more times it's been trained so far.
-* Remove rows that don't fit the output patterns described above, saving them to `output/rejects.csv` so you can check if the requirements are making sense.
-* Save rows that do fit expectations to `output/amalgamated.csv` with the same 3 columns as the input plus two more which store the number of training iterations and the temperature that were used to generate them.
-* Save the model that's been built to this point, and then start iterating over the invididual files' contents:
-* Train the model `n_individual_passes` more times, on just the individual dataset.
-* Generate output in the same way as for the amalgamated one, saving each set with a filename that matches the input file.
-* Reload the model that was saved after the overall training, and repeat for the next file.
+2. Load them individually and also create a massive amalgamated set from all of them.
+3. Wipe the `/output/` folder.
+4. Starting with a fresh clean RNN model, train that `n_overall_passes` times on the whole set.
+5. Each iteration, generate `output_size` rows of sample output at a range of temperatures in `n_temp_increments` increments, going higher the more times it's been trained so far.
+6. Remove rows that don't fit the output patterns described above, saving them to `output/rejects.csv` so you can check if the requirements are making sense.
+7. Save rows that do fit expectations to `output/amalgamated.csv` with the same 3 columns as the input plus two more which store the number of training iterations and the temperature that were used to generate them.
+8. Save the model that's been built to this point, and then start iterating over the invididual files' contents:
+9. Train the model `n_individual_passes` more times, on just the individual dataset.
+10. Generate output in the same way as for the amalgamated one, saving each set with a filename that matches the input file.
+11. Reload the model that was saved after the overall training, and repeat for the next file.
 
 
