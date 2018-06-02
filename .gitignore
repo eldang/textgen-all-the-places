@@ -1,5 +1,7 @@
 # output files
 output/*.csv
+output/README.md
+
 
 # QGIS temp files
 *.qgs~
