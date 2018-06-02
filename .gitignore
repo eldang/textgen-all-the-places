@@ -1,6 +1,12 @@
 # output files
 output/
 
+# QGIS temp files
+*.qgs~
+
+# RNN weights that I haven't saved explicitly
+textgenrnn_weights.hdf5
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -105,3 +111,4 @@ venv.bak/
 
 # mypy
 .mypy_cache/
+
