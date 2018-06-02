@@ -1,0 +1,2 @@
+tensorflow == 1.8
+textgenrnn == 1.3
