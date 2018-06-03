@@ -15,10 +15,10 @@ def main():
 	outputdir = "output"
 
 ## How many times to repeat various things
-	n_overall_passes = 25		# training iterations on the combined dataset
+	n_overall_passes = 20		# training iterations on the combined dataset
 	n_individual_passes = 2	# training iterations on each individual dataset
-	output_size =  5				# how many rows to generate at each set of parameters
-	n_temp_increments = 25	# how many different temperatures to try
+	output_size =  1				# how many rows to generate at each set of parameters
+	n_temp_increments = 100	# how many different temperatures to try
 
 # Get things started
 ## Make sure we have an output directory and it's empty
@@ -53,19 +53,25 @@ def main():
 	textgen.reset()
 
 # Train on the amalgamated dataset
-	textgen.train_on_texts(amalgamated, new_model=True, num_epochs=1)
-	for i in range(1, 1 + n_overall_passes):
-		if i > 1:
-			textgen.train_on_texts(amalgamated, new_model=False, num_epochs=1)
-		for j in range(1, 1 + n_temp_increments):
-			# some silly maths to just get a range of temperatures that creeps up higher as we do more training passes
-			temp = (i / n_overall_passes + j - 1) / n_temp_increments + 0.1
-			fname =  "iteration-" + str(i) + "-temp-" + "{0:.3f}".format(temp) + ".csv"
-			fpath = os.path.join(outputdir, fname)
-			textgen.generate_to_file(fpath, n=output_size, temperature=temp)
+	with open(os.path.join(outputdir, "amalgamated.csv"), 'w') as outfile:
+		outfile.write("name,lat,lon,epoch,temp,difficulty\n")
+		textgen.train_on_texts(amalgamated, new_model=True, num_epochs=1)
+		for i in range(1, 1 + n_overall_passes):
+			# Make sure the file gets saved at least once per training cycle
+			outfile.flush()
+			os.fsync(outfile)
+			if i > 1:
+				textgen.train_on_texts(amalgamated, new_model=False, num_epochs=1)
+			for j in range(1, 1 + n_temp_increments):
+				temp = set_temperature(i, j, n_overall_passes, n_temp_increments)
+				for k in range(0, output_size):
+					text = textgen.generate(n=1, temperature=temp, return_as_list=True)[0]
+					if text is not None:
+						row = str(text) + "," + str(i) + "," + str(temp)
+						# TODO: come up with a difficulty rating
+						outfile.write(row+"\n")
 
 # TODO:
-## instead of generating to file, use textgen.generate() with return_as_list=True to get a list
 ## step through that rejecting as necessary and adding the 3 metadata columns
 ## save rejects out as one set, accepts all into a single file
 ## then start going through the individual files
@@ -73,6 +79,11 @@ def main():
 
 
 
+
+
+# some silly maths to just get a range of temperatures that creeps up higher as we do more training passes
+def set_temperature(training_epoch, output_iteration, n_epochs, n_iterations):
+	return (training_epoch / n_epochs + output_iteration - 1) / n_iterations + 0.1
 
 
 
