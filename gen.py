@@ -15,6 +15,7 @@ def main():
 	inputdir = "data"
 	outputdir = "output"
 	rejects = "rejects.csv"
+	savedweights = "deliberately_saved_weights.hdf5"
 
 ## How many times to repeat various things
 	n_overall_passes = 2		# training iterations on the combined dataset
@@ -36,7 +37,7 @@ def main():
 	infiles = os.listdir(inputdir)
 	amalgamated = []
 	individuals = {}
-	names = []
+	alreadyseen = []
 	for fname in infiles:
 		if fname[-4:] == ".csv":
 			text = []
@@ -45,7 +46,7 @@ def main():
 					# clean up typical artefacts from reading an Excel CSV as text
 					cleaned = line.replace('\n', '').replace('\ufeff', '')
 					text.append(cleaned)
-					names.append(cleaned.split(",")[0])
+					alreadyseen.append(cleaned.split(",")[0])
 			individuals[fname[:-4]] = text
 			amalgamated += text
 	print_with_timestamp("Read " + str(len(individuals)) + " datasets.")
@@ -58,38 +59,47 @@ def main():
 	with open(os.path.join(outputdir, rejects), 'w') as rejectsfile:
 		rejectsfile.write("source,reason,epoch,temp,difficulty\n")
 
-# Train on the amalgamated dataset
-		with open(os.path.join(outputdir, "amalgamated.csv"), 'w') as outfile:
-			outfile.write("name,lat,lon,epoch,temp,difficulty\n")
-			textgen.train_on_texts(amalgamated, new_model=True, num_epochs=1)
-			for i in range(1, 1 + n_overall_passes):
-				# Make sure the file gets saved at least once per training cycle
-				flushbuffers([outfile, rejectsfile])
-				if i > 1:
-					textgen.train_on_texts(amalgamated, new_model=False, num_epochs=1)
-				for j in range(1, 1 + n_temp_increments):
-					temp = set_temperature(i, j, n_overall_passes, n_temp_increments)
-					texts = textgen.generate(n=output_size, temperature=temp, return_as_list=True)
-					for text in texts:
-						metadata = str(i) + "," + str(temp) + "," + calc_difficulty(i, j, n_overall_passes, n_temp_increments)
-						verdict = evaluate_string(text, names)
-						if verdict == "accept":
-							outfile.write(text + "," + metadata + "\n")
-							names.append(text.split(",")[0])
-						else:
-							rejectsfile.write("amalgamated," + verdict + ", " + metadata)
-							rejectsfile.write("," + text + "\n")
+# Train on and apply to the amalgamated dataset
+		handle_dataset(textgen, outputdir, rejectsfile, "amalgamated", amalgamated, n_overall_passes, n_temp_increments, output_size, alreadyseen, True)
 
-# TODO:
-## step through that rejecting as necessary and adding the 3 metadata columns
-## save rejects out as one set, accepts all into a single file
-## then start going through the individual files
-## then find more data!
+# Train on and apply to the individual datasets
+		textgen.save(savedweights)
+		for dataset in individuals.keys():
+			textgen = textgenrnn(savedweights)
+			handle_dataset(textgen, outputdir, rejectsfile, dataset, individuals[dataset], n_individual_passes, n_temp_increments, output_size, alreadyseen, False)
 
 
 
-# checking output for being in broadly the right format
-def evaluate_string(text, names):
+
+
+def handle_dataset(textgen, outputdir, rejectsfile, datasetname, data, n_passes, n_temp_increments, output_size, alreadyseen, newmodel):
+	with open(os.path.join(outputdir, datasetname + ".csv"), 'w') as outfile:
+		outfile.write("name,lat,lon,epoch,temp,difficulty\n")
+		textgen.train_on_texts(data, new_model=newmodel, num_epochs=1)
+		for i in range(1, 1 + n_passes):
+			# Make sure the file gets saved at least once per training cycle
+			flushbuffers([outfile, rejectsfile])
+			if i > 1:
+				textgen.train_on_texts(data, new_model=False, num_epochs=1)
+			for j in range(1, 1 + n_temp_increments):
+				temp = set_temperature(i, j, n_passes, n_temp_increments)
+				texts = textgen.generate(n=output_size, temperature=temp, return_as_list=True)
+				for text in texts:
+					metadata = str(i) + "," + str(temp) + "," + calc_difficulty(i, j, n_passes, n_temp_increments)
+					verdict = evaluate_string(text, alreadyseen)
+					if verdict == "accept":
+						outfile.write(text + "," + metadata + "\n")
+						alreadyseen.append(text.split(",")[0])
+					else:
+						rejectsfile.write(datasetname + "," + verdict + ", " + metadata)
+						rejectsfile.write("," + text + "\n")
+
+
+
+
+
+# checks output for being in broadly the right format
+def evaluate_string(text, alreadyseen):
 	parts = text.split(",")
 	namespattern = r"\w+( & \w+)?([ '\-]\w+)*(\(\w+( &)?([ '\-]\w+)*\))?"
 	digitspattern = r"\-?\d\d?\d?(\.\d+)?"
@@ -98,18 +108,14 @@ def evaluate_string(text, names):
 	elif len(parts) > 3:
 		return "extra column"
 	elif re.fullmatch(namespattern, parts[0]) is None:
-		print(parts[0], re.match(namespattern, parts[0]))
 		return "name invalid"
 	elif re.fullmatch(digitspattern, parts[1]) is None:
-		print(parts[1], re.match(digitspattern, parts[1]))
 		return "lat invalid"
 	elif re.fullmatch(digitspattern, parts[2]) is None:
-		print(parts[2], re.match(digitspattern, parts[2]))
 		return "lon invalid"
-	elif parts[0] in names:
+	elif parts[0] in alreadyseen:
 		return "repeat"
 	else:
-		print(parts)
 		return "accept"
 
 

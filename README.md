@@ -8,8 +8,7 @@ Janelle is kind enough to maintain a [FAQ](http://aiweirdness.com/faq) which lea
 
 ## data
 ### tube stations
-Conveniently, the OpenStreetMap wiki has a public domain [list of London Underground stations](https://wiki.openstreetmap.org/wiki/List_of_London_Underground_stations) in a form that's easy to copy-paste into Excel. I'm including DLR stations because although they have a bit of a distinct feel to them they're not radically different.
-
+Conveniently, the OpenStreetMap wiki has a public domain [list of London Underground stations](https://wiki.openstreetmap.org/wiki/List_of_London_Underground_stations) in a form that's easy to copy-paste into Excel. I've kept the DLR stations separate because they do have a noticeably different flavour.
 
 ## method
 ### basic howto
@@ -29,7 +28,7 @@ Note that the following restrictions will be imposed on output data, so you'll g
 * Place names contain only unaccented Latin letters, apostrophes, spaces, parentheses, ampersands, and dashes, with no repeated spaces or punctuation.
 * Latitude & longitude are valid real numbers in a range defined by the extremes of the input data.
 
-This is very UK-centric, because I'm specifically using it for British place names.  If you want to work on data from a region or language which these are a poor fit for, it shouldn't be too hard to tweak the restrictions.
+This is very UK-centric, because I'm specifically using it for British place names.  If you want to work on data from a region or language which these are a poor fit for, it shouldn't be too hard to tweak the restrictions, or remove them altogether by making the `evaluate_string()` function always return `True`.
 
 ### to start tweaking in other ways
 I've tried to keep all the parameters controlled by variables at the start of the main function, so you can easily tweak those without having dig through much. To get a sense of what they do and what other customisations are available, I recommend looking over the iPython examples that Max shares as [documentation for textgenrnn](https://github.com/minimaxir/textgenrnn/tree/master/docs). I've found those really helpful.
@@ -40,7 +39,7 @@ I've tried to keep all the parameters controlled by variables at the start of th
 3. Wipe the `output/` folder.
 4. Starting with a fresh clean RNN model, train that `n_overall_passes` times on the whole set.
 5. Each iteration, generate `output_size` rows of sample output at a range of temperatures in `n_temp_increments` increments, going higher the more times it's been trained so far.
-6. Remove rows that don't fit the output patterns described above, or have a name already in the input data, saving them to `output/rejects.csv` so you can check if the requirements are making sense.
+6. Remove rows that don't fit the output patterns described above, or have a name already in the input or output data, saving them to `output/rejects.csv` so you can check if the requirements are making sense.
 7. Save rows that do fit expectations to `output/amalgamated.csv` with the same 3 columns as the input plus three more which store the number of training iterations, the temperature that were used to generate them, and a score that estimates how likely I reckon it is that this combination of parameters will produce a believable fake name.
 8. Save the model that's been built to this point, and then start iterating over the invididual files' contents:
 9. Train the model `n_individual_passes` more times, on just the individual dataset.

@@ -6,6 +6,7 @@ output/*.csv
 
 # RNN weights that I haven't saved explicitly
 textgenrnn_weights.hdf5
+deliberately_saved_weights.hdf5
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
