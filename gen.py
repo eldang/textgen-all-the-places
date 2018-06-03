@@ -2,6 +2,7 @@
 
 # Python standard library includes
 import os
+import re
 import sys
 import time
 
@@ -77,7 +78,7 @@ def main():
 							names.append(text.split(",")[0])
 						else:
 							rejectsfile.write("amalgamated," + verdict + ", " + metadata)
-							rejectsfile.write(text + "\n")
+							rejectsfile.write("," + text + "\n")
 
 # TODO:
 ## step through that rejecting as necessary and adding the 3 metadata columns
@@ -90,13 +91,25 @@ def main():
 # checking output for being in broadly the right format
 def evaluate_string(text, names):
 	parts = text.split(",")
+	namespattern = r"\w+( & \w+)?([ '\-]\w+)*(\(\w+( &)?([ '\-]\w+)*\))?"
+	digitspattern = r"\-?\d\d?\d?(\.\d+)?"
 	if len(parts) < 3:
 		return "missing column"
 	elif len(parts) > 3:
 		return "extra column"
+	elif re.fullmatch(namespattern, parts[0]) is None:
+		print(parts[0], re.match(namespattern, parts[0]))
+		return "name invalid"
+	elif re.fullmatch(digitspattern, parts[1]) is None:
+		print(parts[1], re.match(digitspattern, parts[1]))
+		return "lat invalid"
+	elif re.fullmatch(digitspattern, parts[2]) is None:
+		print(parts[2], re.match(digitspattern, parts[2]))
+		return "lon invalid"
 	elif parts[0] in names:
 		return "repeat"
 	else:
+		print(parts)
 		return "accept"
 
 
