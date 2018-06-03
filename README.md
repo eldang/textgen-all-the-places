@@ -15,7 +15,7 @@ Conveniently, the OpenStreetMap wiki has a public domain [list of London Undergr
 ### basic howto
 * To install the RNN: `pip3 install -r requirements.txt`
 * To run it with some simple presets: `python3 gen.py`
-* To make it share your computer better if you're going to leave it running in the background (unix/linux/Mac OS X): `nice -n18 python3 gen.py`
+* To make it share your CPU more kindly if you're going to leave it running in the background (unix/linux/Mac OS X): `nice -n18 python3 gen.py`
 * Output will be saved as a series of CSV files in the `/output/` folder
 
 ### to add your own data
@@ -32,16 +32,16 @@ Note that the following restrictions will be imposed on output data, so you'll g
 This is very UK-centric, because I'm specifically using it for British place names.  If you want to work on data from a region or language which these are a poor fit for, it shouldn't be too hard to tweak the restrictions.
 
 ### to start tweaking in other ways
-I've tried to keep all the parameters controlled by variables at the start of the script, so you can easily tweak those without having dig through much. To get a sense of what they do and what other customisations are available, I recommend looking over the iPython examples that Max shares as [documentation for textgenrnn](https://github.com/minimaxir/textgenrnn/tree/master/docs). I've found those really helpful.
+I've tried to keep all the parameters controlled by variables at the start of the main function, so you can easily tweak those without having dig through much. To get a sense of what they do and what other customisations are available, I recommend looking over the iPython examples that Max shares as [documentation for textgenrnn](https://github.com/minimaxir/textgenrnn/tree/master/docs). I've found those really helpful.
 
 ### what it's doing
-1. Scan `/data/` folder for all available `.csv` files.
+1. Scan `data/` folder for all available `.csv` files.
 2. Load them individually and also create a massive amalgamated set from all of them.
-3. Wipe the `/output/` folder.
+3. Wipe the `output/` folder.
 4. Starting with a fresh clean RNN model, train that `n_overall_passes` times on the whole set.
 5. Each iteration, generate `output_size` rows of sample output at a range of temperatures in `n_temp_increments` increments, going higher the more times it's been trained so far.
-6. Remove rows that don't fit the output patterns described above, saving them to `output/rejects.csv` so you can check if the requirements are making sense.
-7. Save rows that do fit expectations to `output/amalgamated.csv` with the same 3 columns as the input plus two more which store the number of training iterations and the temperature that were used to generate them.
+6. Remove rows that don't fit the output patterns described above, or have a name already in the input data, saving them to `output/rejects.csv` so you can check if the requirements are making sense.
+7. Save rows that do fit expectations to `output/amalgamated.csv` with the same 3 columns as the input plus three more which store the number of training iterations, the temperature that were used to generate them, and a score that estimates how likely I reckon it is that this combination of parameters will produce a believable fake name.
 8. Save the model that's been built to this point, and then start iterating over the invididual files' contents:
 9. Train the model `n_individual_passes` more times, on just the individual dataset.
 10. Generate output in the same way as for the amalgamated one, saving each set with a filename that matches the input file.
