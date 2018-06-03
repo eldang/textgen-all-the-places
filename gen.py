@@ -18,10 +18,10 @@ def main():
 	savedweights = "deliberately_saved_weights.hdf5"
 
 ## How many times to repeat various things
-	n_overall_passes = 2		# training iterations on the combined dataset
-	n_individual_passes = 2	# training iterations on each individual dataset
-	output_size =  2				# how many rows to generate at each set of parameters
-	n_temp_increments = 3	# how many different temperatures to try
+	n_overall_passes =  1			# training iterations on the combined dataset
+	n_individual_passes = 20	# training iterations on each individual dataset
+	output_size =  1					# how many rows to generate at each set of parameters
+	n_temp_increments = 100		# how many different temperatures to try
 
 # Get things started
 ## Make sure we have an output directory and it's empty
@@ -45,8 +45,9 @@ def main():
 				for line in infile:
 					# clean up typical artefacts from reading an Excel CSV as text
 					cleaned = line.replace('\n', '').replace('\ufeff', '')
-					text.append(cleaned)
-					alreadyseen.append(cleaned.split(",")[0])
+					if cleaned != '':
+						text.append(cleaned)
+						alreadyseen.append(cleaned.split(",")[0])
 			individuals[fname[:-4]] = text
 			amalgamated += text
 	print_with_timestamp("Read " + str(len(individuals)) + " datasets.")
@@ -73,6 +74,7 @@ def main():
 
 
 def handle_dataset(textgen, outputdir, rejectsfile, datasetname, data, n_passes, n_temp_increments, output_size, alreadyseen, newmodel):
+	bounds = find_bounds(data)
 	with open(os.path.join(outputdir, datasetname + ".csv"), 'w') as outfile:
 		outfile.write("name,lat,lon,epoch,temp,difficulty\n")
 		textgen.train_on_texts(data, new_model=newmodel, num_epochs=1)
@@ -86,7 +88,7 @@ def handle_dataset(textgen, outputdir, rejectsfile, datasetname, data, n_passes,
 				texts = textgen.generate(n=output_size, temperature=temp, return_as_list=True)
 				for text in texts:
 					metadata = str(i) + "," + str(temp) + "," + calc_difficulty(i, j, n_passes, n_temp_increments)
-					verdict = evaluate_string(text, alreadyseen)
+					verdict = evaluate_string(text, alreadyseen, bounds)
 					if verdict == "accept":
 						outfile.write(text + "," + metadata + "\n")
 						alreadyseen.append(text.split(",")[0])
@@ -96,10 +98,30 @@ def handle_dataset(textgen, outputdir, rejectsfile, datasetname, data, n_passes,
 
 
 
+def find_bounds(data):
+	minX = 180
+	maxX = -180
+	minY = 90
+	maxY = -90
+	for row in data:
+		X = float(row.split(",")[2])
+		Y = float(row.split(",")[1])
+		if X < minX: minX = X
+		if X > maxX: maxX = X
+		if Y < minY: minY = Y
+		if Y > maxY: maxY = Y
+	return {
+		'minX': minX,
+		'maxX': maxX,
+		'minY': minY,
+		'maxY': maxY
+	}
+
+
 
 
 # checks output for being in broadly the right format
-def evaluate_string(text, alreadyseen):
+def evaluate_string(text, alreadyseen, bounds):
 	parts = text.split(",")
 	namespattern = r"\w+( & \w+)?([ '\-]\w+)*(\(\w+( &)?([ '\-]\w+)*\))?"
 	digitspattern = r"\-?\d\d?\d?(\.\d+)?"
@@ -113,6 +135,14 @@ def evaluate_string(text, alreadyseen):
 		return "lat invalid"
 	elif re.fullmatch(digitspattern, parts[2]) is None:
 		return "lon invalid"
+	elif float(parts[1]) < bounds['minY']:
+		return "S of bounds"
+	elif float(parts[1]) > bounds['maxY']:
+		return "N of bounds"
+	elif float(parts[2]) < bounds['minX']:
+		return "W of bounds"
+	elif float(parts[2]) > bounds['maxX']:
+		return "E of bounds"
 	elif parts[0] in alreadyseen:
 		return "repeat"
 	else:
