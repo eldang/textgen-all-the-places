@@ -15,10 +15,10 @@ def main():
 	outputdir = "output"
 
 ## How many times to repeat various things
-	n_overall_passes = 10		# training iterations on the combined dataset
+	n_overall_passes = 25		# training iterations on the combined dataset
 	n_individual_passes = 2	# training iterations on each individual dataset
-	output_size = 50				# how many rows to generate at each set of parameters
-	n_temp_increments = 5		# how many different temperatures to try
+	output_size =  5				# how many rows to generate at each set of parameters
+	n_temp_increments = 25	# how many different temperatures to try
 
 # Get things started
 ## Make sure we have an output directory and it's empty
@@ -40,8 +40,8 @@ def main():
 			text = []
 			with open(os.path.join(inputdir, fname), 'r') as infile:
 				for line in infile:
+					# clean up typical artefacts from reading an Excel CSV as text
 					cleaned = line.replace('\n', '').replace('\ufeff', '')
-					# the two .replace() calls above are just to clean up typical artefacts
 					text.append(cleaned)
 					names.append(cleaned.split(",")[0])
 			individuals[fname[:-4]] = text
@@ -58,10 +58,10 @@ def main():
 		if i > 1:
 			textgen.train_on_texts(amalgamated, new_model=False, num_epochs=1)
 		for j in range(1, 1 + n_temp_increments):
-			temp = (i / n_overall_passes + j - 0.9) / n_temp_increments
+			# some silly maths to just get a range of temperatures that creeps up higher as we do more training passes
+			temp = (i / n_overall_passes + j - 1) / n_temp_increments + 0.1
 			fname =  "iteration-" + str(i) + "-temp-" + "{0:.3f}".format(temp) + ".csv"
 			fpath = os.path.join(outputdir, fname)
-			print_with_timestamp(fpath)
 			textgen.generate_to_file(fpath, n=output_size, temperature=temp)
 
 # TODO:
