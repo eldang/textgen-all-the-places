@@ -7,6 +7,7 @@ import sys
 import time
 
 # Includes that have to be installed
+import psutil
 from textgenrnn import textgenrnn
 
 def main():
@@ -24,6 +25,8 @@ def main():
 	n_temp_increments = 200		# how many different temperatures to try
 
 # Get things started
+## First call to this function sets up its tracking
+	psutil.cpu_times_percent(interval=None, percpu=False)
 ## Make sure we have an output directory and it's empty
 	if os.path.isdir(outputdir):
 		for fname in os.listdir(outputdir):
@@ -33,7 +36,7 @@ def main():
 		os.mkdir(outputdir)
 
 ## Now load all the data
-	print_with_timestamp("Loading input data from " + inputdir + "/")
+	print_with_timestamp("Loading input data from " + inputdir + "/*.csv")
 	infiles = os.listdir(inputdir)
 	amalgamated = []
 	individuals = {}
@@ -56,7 +59,7 @@ def main():
 	textgen = textgenrnn()
 	textgen.reset()
 
-# Open the rejects file
+## Open the rejects file
 	with open(os.path.join(outputdir, rejects), 'w') as rejectsfile:
 		rejectsfile.write("source,reason,epoch,temp,difficulty\n")
 
@@ -80,8 +83,9 @@ def handle_dataset(textgen, outputdir, rejectsfile, datasetname, data, n_passes,
 		print_with_timestamp(
 			"Starting work on dataset '" + datasetname +
 			"' which contains " + str(len(data)) +
-			" entries and will get " + str(n_passes) + " iterations of training."
+			" entries and will get " + str(n_passes) + " iteration[s] of training."
 		)
+		dynamic_wait(1)
 		textgen.train_on_texts(data, new_model=newmodel, num_epochs=1)
 		for i in range(1, 1 + n_passes):
 			# Make sure the file gets saved at least once per training cycle
@@ -91,12 +95,13 @@ def handle_dataset(textgen, outputdir, rejectsfile, datasetname, data, n_passes,
 					"Training iteration " + str(i) + " of " + str(n_passes) +
 					" on dataset '" + datasetname + "'"
 				)
+				dynamic_wait(n_passes)
 				textgen.train_on_texts(data, new_model=False, num_epochs=1)
 			print_with_timestamp(
 				"Generating " + str(n_temp_increments * output_size) +
 				" output entries at " + str(n_temp_increments) +
-				" temperatures, from dataset '" + datasetname +
-				"', training iteration " + str(i) + " of " + str(n_passes)
+				" temperatures from dataset '" + datasetname +
+				"' training iteration " + str(i) + " of " + str(n_passes)
 			)
 			for j in range(1, 1 + n_temp_increments):
 				temp = set_temperature(i, j, n_passes, n_temp_increments)
@@ -110,6 +115,9 @@ def handle_dataset(textgen, outputdir, rejectsfile, datasetname, data, n_passes,
 					else:
 						rejectsfile.write(datasetname + "," + verdict + ", " + metadata)
 						rejectsfile.write("," + text + "\n")
+				dynamic_wait(n_increments / 3)
+
+
 
 
 
@@ -140,11 +148,15 @@ def evaluate_string(text, alreadyseen, bounds):
 	parts = text.split(",")
 	# this regex should match:
 	## starts with a capitalised word
-	## may contain more words, separated by single spaces, dashes or ampersands (capitalisation optional)
+	## may contain more words, separated by single spaces, dashes or ampersands
 	## and up to 1 parenthesised word or set of words
-	## no caps that aren't at the start of words
+	## no caps that aren't at the start of words, but only the first word has have a starting capital letter
+	## See https://www.debuggex.com/r/eUjXEGWUUtEY8f2- for a diagram
 	namespattern = r"([A-Z][a-z]*)+( & ([A-Z]?[a-z]*))?([ '\-]([A-Z]?[a-z]*)+)*(\(([A-Z]?[a-z]*)+( &)?([ '\-]([A-Z]?[a-z]*)+)*\))?"
-	# this regex should match any valid number with 1-3 digits before a decimal point
+	# this regex should match:
+	## any valid number with 1-3 digits before an optional decimal point
+	## and 1 or more after a point if present.
+	## See https://www.debuggex.com/r/h-XQ3XwR6iPsCtVH for a diagram
 	digitspattern = r"\-?\d\d?\d?(\.\d+)?"
 	if len(parts) < 3:
 		return "missing column"
@@ -174,13 +186,27 @@ def evaluate_string(text, alreadyseen, bounds):
 
 # some silly maths to just get a range of temperatures that creeps up higher as we do more training passes
 def set_temperature(training_epoch, output_iteration, n_epochs, n_iterations):
-	return (training_epoch / n_epochs + output_iteration) / n_iterations
+	x = 1.1	# arbitrary multiplier
+	y = 0.1	# arbitrary amount to add
+	return (training_epoch / n_epochs + output_iteration) / n_iterations * x + y
 
 
 
 # some slightly less silly maths to come up with a vague approximation of how closely I expect a given entry to resemble the training data
 def calc_difficulty(training_epoch, output_iteration, n_epochs, n_iterations):
 	return str((training_epoch / n_epochs + 1 - output_iteration / n_iterations) / 2)
+
+
+
+# wait an amount of time that relates to CPU load, so as to share better
+def dynamic_wait(divisor):
+	times = psutil.cpu_times_percent(interval=None, percpu=False)
+	foreground = times.user + times.nice
+	background = times.system + times.idle
+	if foreground > background:
+		time.sleep((foreground - background) / divisor)
+
+
 
 
 
