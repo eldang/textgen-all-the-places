@@ -18,10 +18,10 @@ def main():
 	savedweights = "deliberately_saved_weights.hdf5"
 
 ## How many times to repeat various things
-	n_overall_passes =  2			# training iterations on the combined dataset
+	n_overall_passes =  1			# training iterations on the combined dataset
 	n_individual_passes = 20	# training iterations on each individual dataset
 	output_size =  1					# how many rows to generate at each set of parameters
-	n_temp_increments = 100		# how many different temperatures to try
+	n_temp_increments = 200		# how many different temperatures to try
 
 # Get things started
 ## Make sure we have an output directory and it's empty
@@ -77,12 +77,27 @@ def handle_dataset(textgen, outputdir, rejectsfile, datasetname, data, n_passes,
 	bounds = find_bounds(data)
 	with open(os.path.join(outputdir, datasetname + ".csv"), 'w') as outfile:
 		outfile.write("name,lat,lon,epoch,temp,difficulty\n")
+		print_with_timestamp(
+			"Starting work on dataset '" + datasetname +
+			"' which contains " + str(len(data)) +
+			" entries and will get " + str(n_passes) + " iterations of training."
+		)
 		textgen.train_on_texts(data, new_model=newmodel, num_epochs=1)
 		for i in range(1, 1 + n_passes):
 			# Make sure the file gets saved at least once per training cycle
 			flushbuffers([outfile, rejectsfile])
 			if i > 1:
+				print_with_timestamp(
+					"Training iteration " + str(i) + " of " + str(n_passes) +
+					" on dataset '" + datasetname + "'"
+				)
 				textgen.train_on_texts(data, new_model=False, num_epochs=1)
+			print_with_timestamp(
+				"Generating " + str(n_temp_increments * output_size) +
+				" output entries at " + str(n_temp_increments) +
+				" temperatures, from dataset '" + datasetname +
+				"', training iteration " + str(i) + " of " + str(n_passes)
+			)
 			for j in range(1, 1 + n_temp_increments):
 				temp = set_temperature(i, j, n_passes, n_temp_increments)
 				texts = textgen.generate(n=output_size, temperature=temp, return_as_list=True)
@@ -123,7 +138,13 @@ def find_bounds(data):
 # checks output for being in broadly the right format
 def evaluate_string(text, alreadyseen, bounds):
 	parts = text.split(",")
-	namespattern = r"\w+( & \w+)?([ '\-]\w+)*(\(\w+( &)?([ '\-]\w+)*\))?"
+	# this regex should match:
+	## starts with a capitalised word
+	## may contain more words, separated by single spaces, dashes or ampersands (capitalisation optional)
+	## and up to 1 parenthesised word or set of words
+	## no caps that aren't at the start of words
+	namespattern = r"([A-Z][a-z]*)+( & ([A-Z]?[a-z]*))?([ '\-]([A-Z]?[a-z]*)+)*(\(([A-Z]?[a-z]*)+( &)?([ '\-]([A-Z]?[a-z]*)+)*\))?"
+	# this regex should match any valid number with 1-3 digits before a decimal point
 	digitspattern = r"\-?\d\d?\d?(\.\d+)?"
 	if len(parts) < 3:
 		return "missing column"
@@ -153,7 +174,7 @@ def evaluate_string(text, alreadyseen, bounds):
 
 # some silly maths to just get a range of temperatures that creeps up higher as we do more training passes
 def set_temperature(training_epoch, output_iteration, n_epochs, n_iterations):
-	return (training_epoch / n_epochs + output_iteration - 1) / n_iterations + 0.1
+	return (training_epoch / n_epochs + output_iteration) / n_iterations
 
 
 
@@ -164,6 +185,7 @@ def calc_difficulty(training_epoch, output_iteration, n_epochs, n_iterations):
 
 
 def flushbuffers(fds):
+	sys.stdout.flush()
 	for fd in fds:
 		fd.flush()
 		os.fsync(fd)
