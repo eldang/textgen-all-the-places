@@ -204,6 +204,7 @@ def dynamic_wait(divisor):
 	foreground = times.user + times.nice
 	background = times.system + times.idle
 	if foreground > background:
+		sys.stdout.flush()
 		time.sleep((foreground - background) / divisor)
 
 
