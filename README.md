@@ -8,13 +8,23 @@ Janelle is kind enough to maintain a [FAQ](http://aiweirdness.com/faq) which lea
 
 ## data
 ### tube stations
-Conveniently, the OpenStreetMap wiki has a public domain [list of London Underground stations](https://wiki.openstreetmap.org/wiki/List_of_London_Underground_stations) in a form that's easy to copy-paste into Excel. I've kept the DLR stations separate because they do have a noticeably different flavour.
+Conveniently, the OpenStreetMap wiki has a public domain [list of London Underground stations](https://wiki.openstreetmap.org/wiki/List_of_London_Underground_stations) in a form that's easy to copy-paste into Excel. They give the Docklands Light Railway its own category, and those station names do have something of a distinct character to them, but I decided to put them all together because there just aren't enough DLR stations on their own.
+
+### places around England
+These all came from an OpenStreetMap data export, with some fairly simple processing:
+
+1. Extracted all points tagged with feature classes like `city`, `farm`, `hamlet`, `locality`, `suburb`, `town` and `village`
+2. Cleaned up a few that had commas or digits in the names, because those cause problems with the _extremely simplistic_ way I handle the files.
+3. Used [GADM](https://gadm.org/data.html)'s shapefiles to tag the points with the name of the county they are in.
+4. Separated off all the farms, into one set of input data, saved as `farms.csv`.  Because this particular subset contained many more repeated names than the others (so many "Home Farm"s…), I deduplicated it, just keeping the first instance of each name regardless of the coordinates.
+5. Separated off everything that didn't get tagged with a county, assuming that was because it's in the sea, and made those into a second set of input data, saved as `maritime.csv`.
+6. Made a few more input data files based on very approximate regions of England, by grouping together points from the relevant counties (e.g. Kent, East & West Sussex, Brighton & Hove, Surrey, Hampshire, the Isle of Wight, Portsmouth and Southampton as `southeast.csv`).
 
 ## method
 ### basic howto
 * To install the RNN: `pip3 install -r requirements.txt`
 * To run it with some simple presets: `python3 gen.py`
-* To make it share your CPU more kindly if you're going to leave it running in the background (unix/linux/Mac OS X): `nice -n18 python3 gen.py`
+* To make it share your CPU more generously if you're going to leave it running in the background (unix/linux/Mac OS X): `nice -n19 python3 gen.py`
 * Output will be saved as a series of CSV files in the `/output/` folder
 
 ### to add your own data
