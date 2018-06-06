@@ -115,7 +115,7 @@ def handle_dataset(textgen, outputdir, rejectsfile, datasetname, data, n_passes,
 					else:
 						rejectsfile.write(datasetname + "," + verdict + ", " + metadata)
 						rejectsfile.write("," + text + "\n")
-				dynamic_wait(n_temp_increments)
+				dynamic_wait(n_temp_increments / output_size)
 
 
 
