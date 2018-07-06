@@ -24,7 +24,8 @@ These all came from an OpenStreetMap data export, with some fairly simple proces
 ### basic howto
 * To install the RNN: `pip3 install -r requirements.txt`
 * To run it with some simple presets: `python3 gen.py`
-* To make it share your CPU more generously if you're going to leave it running in the background (unix/linux/Mac OS X): `nice -n19 python3 gen.py`
+* To make it share your CPU a little bit better if you're going to leave it running in the background (unix/linux/Mac OS X): `nice -n19 python3 gen.py`
+* To get further into controlling its CPU use: I recommend playing with [cpulimit](https://github.com/opsengine/cpulimit).
 * Output will be saved as a series of CSV files in the `/output/` folder
 
 ### to add your own data
