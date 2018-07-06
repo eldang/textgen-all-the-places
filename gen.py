@@ -20,7 +20,7 @@ def main():
 
 ## How many times to repeat various things
 	n_overall_passes =  1			# training iterations on the combined dataset
-	n_individual_passes = 20	# training iterations on each individual dataset
+	n_individual_passes = 10	# training iterations on each individual dataset
 	output_size =  1					# how many rows to generate at each set of parameters
 	n_temp_increments = 200		# how many different temperatures to try
 
