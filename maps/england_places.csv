@@ -14024,7 +14024,7 @@ Dorset,Stonehill Down,50.6385869,-2.1052336
 Dorset,Tan-hill Copse,50.916452,-2.2637353
 Dorset,Tenants Hill,50.6904481,-2.5996544
 Dorset,The Cliff,50.8646129,-2.0731419
-Dorset,"The Green, Holt",50.8345519,-1.9594769
+Dorset,The Green,50.8345519,-1.9594769
 Dorset,The Kuwait Arena,50.6937961,-2.2413058
 Dorset,The Villa,50.6931137,-1.9647556
 Dorset,Thistle Hill,50.7488746,-2.9195361
@@ -18804,7 +18804,7 @@ farms,Church Top Farm,53.3864927,-0.0596718
 farms,Church View Farm,53.3484508,-0.4861463
 farms,Church View Farm,52.8069979,-0.3824643
 farms,Churchill,50.2444441,-3.798484
-farms,"Chyvarloe Farm, Gunwalloe, Helston TR12 7PY",50.065568,-5.2790485
+farms,Chyvarloe Farm,50.065568,-5.2790485
 farms,Cider House Farm,50.9560716,0.1646166
 farms,Cider Mill Farm,51.0965556,-0.3514584
 farms,Cidermill Farm,51.1543506,-0.2573741
@@ -25935,7 +25935,7 @@ farms,Stowgill,54.4747664,-2.2459378
 farms,Stragglethorpe Grange,53.0649817,-0.6588204
 farms,Straight Lane Farm,53.1660418,-0.5524157
 farms,Straits Farm,51.1449498,-0.8844125
-farms,"Strattenborough Castle Farm, Unnamed Road, SN6 8TH, Swindon SN6 8TH",51.6275232,-1.6583182
+farms,Strattenborough Castle Farm,51.6275232,-1.6583182
 farms,Strattonhill Farm,52.7430992,1.2771549
 farms,Strawberry Farm,52.7430697,0.2141489
 farms,Strawberry Farm,52.9244377,-0.1985729
@@ -28776,7 +28776,7 @@ Greater London,Austin Terrace,51.4991444,-0.1092286
 Greater London,Avenue Wood,51.6167094,0.1713189
 Greater London,Aylesbury Estate,51.4853277,-0.086079
 Greater London,Barnard Lodge,51.5224645,-0.1945274
-Greater London,"Barnet, Stirling Corner",51.6433247,-0.2546643
+Greater London,Stirling Corner,51.6433247,-0.2546643
 Greater London,Battersea Reach,51.4641228,-0.1847877
 Greater London,Beech Court,51.5223662,-0.1961425
 Greater London,Bell Gardens,51.5676227,-0.0223277
@@ -28899,7 +28899,7 @@ Greater London,Marshall Estate,51.6182274,-0.2349818
 Greater London,Mayford Estate,51.5334161,-0.1354538
 Greater London,Mile End New Town,51.5206248,-0.0673383
 Greater London,Mill Hill Circus,51.6166142,-0.2446233
-Greater London,"Mill Hill, Apex Corner",51.6215144,-0.255131
+Greater London,Apex Corner,51.6215144,-0.255131
 Greater London,Mitcham Garden Village,51.3966262,-0.1637922
 Greater London,Morgan's Walk,51.47871,-0.172627
 Greater London,Murphy's Wharf,51.4933046,0.0231704
@@ -29158,7 +29158,7 @@ Greater London,Hayes,51.5077154,-0.4181471
 Greater London,Hayes,51.3777836,0.0103002
 Greater London,Hendon,51.5897442,-0.22162
 Greater London,Hendon Central,51.5828243,-0.227022
-Greater London,"Hendon, The Hyde",51.5881858,-0.2386411
+Greater London,The Hyde,51.5881858,-0.2386411
 Greater London,Herne Hill,51.4554407,-0.1001002
 Greater London,Heston,51.4854573,-0.3719561
 Greater London,High Barnet,51.6531493,-0.2005407
@@ -33739,7 +33739,7 @@ Knowsley,Waddicar,53.4879936,-2.9137609
 Lancashire,Lancaster,54.0484068,-2.7990345
 Lancashire,Preston,53.7589938,-2.7051618
 Lancashire,Abbeystead,53.9828203,-2.6695077
-Lancashire,"Aighton, Bailey and Chaigley",53.8558414,-2.4997926
+Lancashire,Aighton Bailey and Chaigley,53.8558414,-2.4997926
 Lancashire,Alston,53.8116449,-2.6061849
 Lancashire,Appley Moor,53.5917513,-2.7263721
 Lancashire,Ashton with Stodday,54.0068177,-2.8206633
@@ -39352,13 +39352,13 @@ Norfolk,Deighton Hills,52.6975962,1.1813951
 Norfolk,Diamond Jubilee Wood,52.7279003,1.2969004
 Norfolk,Doves Corner,52.756566,1.5713917
 Norfolk,Drabblegate,52.8063872,1.2619423
-Norfolk,"Drayton Drewray, Open Access Area",52.7011001,1.2151937
+Norfolk,Drayton Drewray,52.7011001,1.2151937
 Norfolk,Drury Square,52.7003884,0.8142143
 Norfolk,Duck & Cover,52.4196363,0.6833494
 Norfolk,Dunsford,52.5482915,1.169186
 Norfolk,Earsham Hall,52.4580194,1.3957767
 Norfolk,Fairway,52.5388102,1.7351543
-Norfolk,"Felthorpe Common, Open Access Area",52.7053945,1.2181965
+Norfolk,Felthorpe Common,52.7053945,1.2181965
 Norfolk,Fersfield Lodge,52.419955,1.0281016
 Norfolk,Fiddler's Green,52.7112659,0.7018351
 Norfolk,Field Barn,52.4488688,0.7339608
@@ -39526,7 +39526,7 @@ Norfolk,Wentworth,52.544528,1.7311488
 Norfolk,West Beckham Common,52.9221673,1.1804348
 Norfolk,West Wretham,52.4875222,0.7941477
 Norfolk,Whitlingham Barns,52.619713,1.3593856
-Norfolk,"Whitwell Common, OpenAccess Land",52.7411814,1.0859527
+Norfolk,Whitwell Common,52.7411814,1.0859527
 Norfolk,Wildflower Meadows,52.7271661,1.2949906
 Norfolk,Witton Heath - Open Access Land,52.8230541,1.4355572
 Norfolk,Woburn,52.5445345,1.7292312
@@ -51983,10 +51983,10 @@ Suffolk,Southolt,52.27422,1.2158947
 Suffolk,Sowley Green,52.1306275,0.4892176
 Suffolk,Spexhall,52.3666359,1.4943044
 Suffolk,Spratt's Street,52.1045869,1.4048129
-Suffolk,"St John, Ilketshall",52.4358516,1.4709158
-Suffolk,"St Lawrence, Ilketshall",52.4157444,1.4844836
-Suffolk,"St Nicholas, South Elmham",52.3951318,1.41386
-Suffolk,"St Peter, South Elmham",52.4128833,1.4323995
+Suffolk,St John Ilketshall,52.4358516,1.4709158
+Suffolk,St Lawrence Ilketshall,52.4157444,1.4844836
+Suffolk,St Nicholas South Elmham,52.3951318,1.41386
+Suffolk,St Peter South Elmham,52.4128833,1.4323995
 Suffolk,Stansfield,52.1371609,0.6065713
 Suffolk,Stanton Chare,52.3315886,0.8706872
 Suffolk,Stanton Street,52.265056,0.8640642
@@ -52189,7 +52189,7 @@ Suffolk,Acton,52.0710417,0.7579926
 Suffolk,Alderton,52.0244212,1.4162838
 Suffolk,Aldham,52.0632432,0.9717538
 Suffolk,Aldringham,52.1938781,1.5785584
-Suffolk,"All Saints, South Elmham",52.3897877,1.4396455
+Suffolk,All Saints South Elmham,52.3897877,1.4396455
 Suffolk,Alpheton,52.1239577,0.7469588
 Suffolk,Ashbocking,52.1463694,1.192063
 Suffolk,Ashfield cum Thorpe,52.217984,1.2352388
@@ -52477,12 +52477,12 @@ Suffolk,Somerton,52.1464596,0.646509
 Suffolk,Sotterley,52.4058667,1.6051395
 Suffolk,South Cove,52.3681484,1.6715844
 Suffolk,Sproughton,52.0624107,1.0952717
-Suffolk,"St Andrew, Ilketshall",52.4304938,1.5056909
-Suffolk,"St Cross, South Elmham",52.4036666,1.3798215
-Suffolk,"St James, South Elmham",52.3793102,1.4064291
-Suffolk,"St Margaret, Ilketshall",52.4161258,1.4543386
-Suffolk,"St Margaret, South Elmham",52.4033336,1.4044216
-Suffolk,"St Michael, South Elmham",52.4025481,1.442273
+Suffolk,St Andrew Ilketshall,52.4304938,1.5056909
+Suffolk,St Cross South Elmham,52.4036666,1.3798215
+Suffolk,St James South Elmham,52.3793102,1.4064291
+Suffolk,St Margaret Ilketshall,52.4161258,1.4543386
+Suffolk,St Margaret South Elmham,52.4033336,1.4044216
+Suffolk,St Michael South Elmham,52.4025481,1.442273
 Suffolk,Stanningfield,52.1762825,0.7539013
 Suffolk,Stanstead,52.1063234,0.6909612
 Suffolk,Stanton,52.3234959,0.8799893
@@ -56327,7 +56327,7 @@ Worcestershire,Stonehall,52.1388816,-2.1744084
 Worcestershire,Sytchampton,52.2932685,-2.2317294
 Worcestershire,Tanner's Green,52.3696105,-1.8758301
 Worcestershire,The Grove at Ryall,52.0638137,-2.194195
-Worcestershire,"The Hill, Abberley",52.3042855,-2.3629367
+Worcestershire,The Hill,52.3042855,-2.3629367
 Worcestershire,The Hook,52.0629082,-2.2595228
 Worcestershire,The Wheatfields,52.1512567,-2.2421587
 Worcestershire,Timberhonger,52.3306932,-2.1079501
