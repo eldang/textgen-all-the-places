@@ -19,10 +19,10 @@ def main():
 	savedweights = "deliberately_saved_weights.hdf5"
 
 ## How many times to repeat various things
-	n_overall_passes =  1			# training iterations on the combined dataset
-	n_individual_passes = 10	# training iterations on each individual dataset
+	n_overall_passes =  2			# training iterations on the combined dataset
+	n_individual_passes = 20	# training iterations on each individual dataset
 	output_size =  1					# how many rows to generate at each set of parameters
-	n_temp_increments = 200		# how many different temperatures to try
+	n_temp_increments = 300		# how many different temperatures to try
 
 # Get things started
 ## First call to this function sets up its tracking
